@@ -20,7 +20,7 @@ export class ZombieApocalypse {
     };
   }
 
-  public moveUnits(): void {
+  private mockMovement(): void {
     const zombies = getUnits(this.worldMap, TileContent.ZOMBIE);
 
     zombies.forEach((z) => {
@@ -46,6 +46,21 @@ export class ZombieApocalypse {
           TileContent.ZOMBIE;
       }
     });
+  }
+
+  private initiateMovement(): void {
+    this.worldMap = this.worldMap.map((row) => {
+      return row.map((tile) => ({
+        ...tile,
+        next: null,
+        content: tile.next ? tile.next : tile.content,
+      }));
+    });
+  }
+
+  public moveUnits(): void {
+    this.mockMovement();
+    this.initiateMovement();
 
     if (this.currentMoveIndex === this.moves.length - 1) {
       this.currentMoveIndex = 0;

@@ -14,10 +14,10 @@ test('generate a 10x10 world', () => {
 });
 
 test('get initial position of a single zombie', () => {
-  const MAP_DIMENSION = faker.datatype.number(10);
+  const MAP_DIMENSION = faker.datatype.number({ min: 2, max: 10 });
   const zombieCoordinate = {
-    x: faker.datatype.number(MAP_DIMENSION - 1),
-    y: faker.datatype.number(MAP_DIMENSION - 1),
+    x: faker.datatype.number({ min: 0, max: MAP_DIMENSION - 1 }),
+    y: faker.datatype.number({ min: 0, max: MAP_DIMENSION - 1 }),
   };
   const worldMap = generateWorldSeed({
     dimension: MAP_DIMENSION,
