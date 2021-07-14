@@ -50,6 +50,7 @@ export class ZombieApocalypse {
       `new zombie ${this.nextZombieId} moved to (${newZombieCoordinate.y},${newZombieCoordinate.x})`,
     );
 
+    this.nextZombieId++;
     if (newZombie.content === TileContent.CREATURE) {
       this.infectCreature(
         {
@@ -61,7 +62,6 @@ export class ZombieApocalypse {
         newZombieCoordinate,
       );
     }
-    this.nextZombieId++;
   }
 
   private mockMovement(): void {

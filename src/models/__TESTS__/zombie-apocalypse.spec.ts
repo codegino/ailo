@@ -122,15 +122,19 @@ it('multiple creature should become a zombies during chain infection', () => {
   expect(zombieApocalypse.worldMap[ZOMBIE.y][ZOMBIE.x + 1].content).toBe(
     TileContent.ZOMBIE,
   );
+  expect(zombieApocalypse.worldMap[ZOMBIE.y][ZOMBIE.x + 1].id).toBe(1);
   expect(
     zombieApocalypse.worldMap[CREATURE_1.y][CREATURE_1.x + 1].content,
   ).toBe(TileContent.ZOMBIE);
+  expect(zombieApocalypse.worldMap[ZOMBIE.y][CREATURE_1.x + 1].id).toBe(2);
   expect(
     zombieApocalypse.worldMap[CREATURE_2.y][CREATURE_2.x + 1].content,
   ).toBe(TileContent.ZOMBIE);
+  expect(zombieApocalypse.worldMap[ZOMBIE.y][CREATURE_2.x + 1].id).toBe(3);
   expect(
     zombieApocalypse.worldMap[CREATURE_3.y][CREATURE_3.x + 1].content,
   ).toBe(TileContent.ZOMBIE);
+  expect(zombieApocalypse.worldMap[ZOMBIE.y][CREATURE_3.x + 1].id).toBe(4);
 });
 
 test('consecutive capture', () => {
