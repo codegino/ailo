@@ -2,7 +2,6 @@ import { Coordinate } from './models/map.model';
 import { MOVE_DIRECTION } from './models/movement-direction.enum';
 import { ZombieApocalypse } from './models/zombie-apocalypse.model';
 import { generateMap } from './utils/map-generator';
-
 import * as inquier from 'inquirer';
 
 function convertStringToValidMovements(moves: string): MOVE_DIRECTION[] {
@@ -37,6 +36,19 @@ function parseZombieCoordinate(value: string): Coordinate {
   };
 }
 
+function parseCreatures(value: string): Coordinate[] {
+  const splitted = value.split(';');
+
+  return splitted.map((creature) => {
+    const [y, x] = creature.split(',');
+
+    return {
+      y: +y,
+      x: +x,
+    };
+  });
+}
+
 let zombieApocalypse: ZombieApocalypse;
 
 async function setupEnvironment() {
@@ -45,55 +57,62 @@ async function setupEnvironment() {
       name: 'dimension',
       message: 'What is the dimension in nxn?',
       type: 'number',
+      default: '10',
     },
   ]);
 
   const { movements } = await inquier.prompt([
     {
       name: 'movements',
-      message:
-        'What are the movements(R[right], L[left], U[up], D[down])? e.g RRUD',
+      message: 'What are the movements(R[right], L[left], U[up], D[down])?',
       type: 'input',
+      default: 'RDRU',
     },
   ]);
 
   const { zombie } = await inquier.prompt([
     {
       name: 'zombie',
-      message: 'What is the initial coordinate of zombie(y,x)? e.g. 0,0 or 2,1',
+      message: 'What is the initial coordinate of zombie(y,x)?',
       type: 'input',
+      default: '0,0',
+    },
+  ]);
+
+  const { creatures } = await inquier.prompt([
+    {
+      name: 'creatures',
+      message: 'What is the initial coordinates of creatures(y,x)?',
+      type: '',
+      default: '0,3;1,4',
     },
   ]);
 
   const DIMENSION = +dimension;
   const MOVEMENTS = convertStringToValidMovements(movements);
   const ZOMBIE = parseZombieCoordinate(zombie);
-
-  const CREATURES: Coordinate[] = [
-    { y: 0, x: 1 },
-    { y: 0, x: 2 },
-  ];
+  const CREATURES = parseCreatures(creatures);
 
   const worldMap = generateMap(DIMENSION, ZOMBIE, CREATURES);
 
   zombieApocalypse = new ZombieApocalypse(worldMap, MOVEMENTS);
 }
 
-async function askForAction(action = 'start') {
+async function askForAction(action = '') {
   const result = await inquier.prompt([
     {
       name: 'action',
       message: 'What do you want to do?',
       type: 'list',
       choices: [
-        { name: 'move', value: 'move' },
+        { name: 'simulate', value: 'simulate' },
         { name: 'quit', value: 'quit' },
       ],
     },
   ]);
   action = result.action;
 
-  if (action === 'move') {
+  if (action === 'simulate') {
     zombieApocalypse.moveUnits();
     zombieApocalypse.printMap();
     await askForAction();
@@ -103,6 +122,11 @@ async function askForAction(action = 'start') {
 }
 
 (async function startApplication() {
-  await setupEnvironment();
-  await askForAction();
+  try {
+    await setupEnvironment();
+    zombieApocalypse.printMap();
+    await askForAction();
+  } catch (error) {
+    console.error(error);
+  }
 })();
