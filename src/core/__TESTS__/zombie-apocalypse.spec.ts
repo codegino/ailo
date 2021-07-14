@@ -1,6 +1,6 @@
 import { generateWorldSeed } from '../../utils/__TESTS__/world-map.seed';
-import { Coordinate, TileContent } from '../map.model';
-import { MOVE_DIRECTION } from '../movement-direction.enum';
+import { Coordinate, TileContent } from '../../models/map.model';
+import { MOVE_DIRECTION } from '../../models/movement-direction.enum';
 import { ZombieApocalypse } from '../zombie-apocalypse.model';
 
 test('Every tick should update current move direction index', () => {

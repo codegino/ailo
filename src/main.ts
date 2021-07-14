@@ -1,6 +1,6 @@
 import { Coordinate } from './models/map.model';
 import { MOVE_DIRECTION } from './models/movement-direction.enum';
-import { ZombieApocalypse } from './models/zombie-apocalypse.model';
+import { ZombieApocalypse } from './core/zombie-apocalypse.model';
 import { generateMap } from './utils/map-generator';
 import * as inquier from 'inquirer';
 

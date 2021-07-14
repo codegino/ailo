@@ -1,7 +1,7 @@
 import { move } from '../utils/movement';
 import { getUnits } from '../utils/world-map.util';
-import { Coordinate, Tile, TileContent, WorldMap } from './map.model';
-import { MOVE_DIRECTION } from './movement-direction.enum';
+import { Coordinate, Tile, TileContent, WorldMap } from '../models/map.model';
+import { MOVE_DIRECTION } from '../models/movement-direction.enum';
 
 export class ZombieApocalypse {
   public currentMoveIndex = 0;
