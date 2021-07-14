@@ -29,6 +29,20 @@ test('get initial position of a single zombie', () => {
   );
 });
 
+test('other tile should be marked as empty', () => {
+  const MAP_DIMENSION = 10;
+  const ZOMBIE = {
+    x: 0,
+    y: 0,
+  };
+  const worldMap = generateWorldSeed({
+    dimension: MAP_DIMENSION,
+    zombie: ZOMBIE,
+  });
+
+  expect(worldMap[1][1].content).toBe(TileContent.EMPTY);
+});
+
 test('should not allow conflicting zombies coordinates', () => {
   const ZOMBIE_1 = {
     x: 0,
