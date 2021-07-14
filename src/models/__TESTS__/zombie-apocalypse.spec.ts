@@ -1,4 +1,4 @@
-import { generateWorldSeed } from '../../utils/__TEST__/world-map.seed';
+import { generateWorldSeed } from '../../utils/__TESTS__/world-map.seed';
 import { MOVE_DIRECTION } from '../movement-direction.enum';
 import { ZombieApocalypse } from '../zombie-apocalypse.model';
 

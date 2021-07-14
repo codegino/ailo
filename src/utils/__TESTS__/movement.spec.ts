@@ -110,7 +110,7 @@ test('Should throw an exception for invalid direction', () => {
   const DIMENSION = 10;
   const x = faker.datatype.number(DIMENSION - 1);
   const y = DIMENSION - 1;
-  const INVALID_DIRECTION = faker.random.word() as any;
+  const INVALID_DIRECTION = faker.random.word() as MOVE_DIRECTION;
 
   expect(() =>
     move({ x, y }, INVALID_DIRECTION, {

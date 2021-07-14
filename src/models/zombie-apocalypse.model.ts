@@ -6,10 +6,10 @@ export class ZombieApocalypse {
 
   constructor(
     public worldMap: WorldMap,
-    private readonly moves: MOVE_DIRECTION[]
+    private readonly moves: MOVE_DIRECTION[],
   ) {}
 
-  public moveUnits() {
+  public moveUnits(): void {
     if (this.currentMoveIndex === this.moves.length - 1) {
       this.currentMoveIndex = 0;
     } else {
@@ -17,7 +17,7 @@ export class ZombieApocalypse {
     }
   }
 
-  public getUnits(unit: TileContent) {
+  public getUnits(unit: TileContent): Coordinate[] {
     const zombies: Coordinate[] = [];
 
     this.worldMap.forEach((row) => {
