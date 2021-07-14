@@ -31,8 +31,9 @@ export class ZombieApocalypse {
       );
 
       const newTile = this.worldMap[newCoordinate.y][newCoordinate.x];
+      const newCurrentTile = this.worldMap[z.y][z.x];
 
-      this.worldMap[z.y][z.x].next = TileContent.EMPTY;
+      newCurrentTile.next = newCurrentTile?.next ?? TileContent.EMPTY;
       newTile.next = TileContent.ZOMBIE;
 
       if (newTile.content === TileContent.CREATURE) {
@@ -53,9 +54,30 @@ export class ZombieApocalypse {
       return row.map((tile) => ({
         ...tile,
         next: null,
-        content: tile.next ? tile.next : tile.content,
+        content: tile?.next ?? tile.content,
       }));
     });
+  }
+
+  public printMap(): void {
+    let map = '';
+    this.worldMap.forEach((row) => {
+      const tiles = row
+        .map((row) => {
+          const tile =
+            row.content === TileContent.CREATURE
+              ? 'C'
+              : row.content === TileContent.ZOMBIE
+              ? 'Z'
+              : ' ';
+
+          return `[${tile}]`;
+        })
+        .join('');
+
+      map += tiles + '\n';
+    });
+    console.log(map);
   }
 
   public moveUnits(): void {

@@ -74,26 +74,23 @@ test('creature should become a zombie when captured', () => {
 test('consecutive capture', () => {
   const ZOMBIE: Coordinate = { x: 0, y: 0 };
   const CREATURE_1: Coordinate = { x: 1, y: 0 };
-  const CREATURE_2: Coordinate = { x: 4, y: 0 };
+  const CREATURE_2: Coordinate = { x: 0, y: 9 };
+  const CREATURE_3: Coordinate = { x: 9, y: 0 };
 
   const zombieApocalypse = new ZombieApocalypse(
     generateWorldSeed({
       zombie: ZOMBIE,
-      creatures: [CREATURE_1, CREATURE_2],
+      creatures: [CREATURE_1, CREATURE_2, CREATURE_3],
     }),
-    [MOVE_DIRECTION.RIGHT, MOVE_DIRECTION.UP],
+    [
+      MOVE_DIRECTION.RIGHT,
+      MOVE_DIRECTION.UP,
+      MOVE_DIRECTION.LEFT,
+      MOVE_DIRECTION.DOWN,
+    ],
   );
 
-  expect(zombieApocalypse.worldMap[ZOMBIE.y][ZOMBIE.x].content).toBe(
-    TileContent.ZOMBIE,
-  );
-  expect(zombieApocalypse.worldMap[CREATURE_1.y][CREATURE_1.x].content).toBe(
-    TileContent.CREATURE,
-  );
-  expect(zombieApocalypse.worldMap[CREATURE_2.y][CREATURE_2.x].content).toBe(
-    TileContent.CREATURE,
-  );
-
+  // Move to right
   zombieApocalypse.moveUnits();
 
   expect(zombieApocalypse.worldMap[ZOMBIE.y][ZOMBIE.x + 1].content).toBe(
@@ -105,4 +102,58 @@ test('consecutive capture', () => {
   expect(zombieApocalypse.worldMap[CREATURE_2.y][CREATURE_2.x].content).toBe(
     TileContent.CREATURE,
   );
+  expect(zombieApocalypse.worldMap[CREATURE_3.y][CREATURE_3.x].content).toBe(
+    TileContent.CREATURE,
+  );
+
+  // Move up
+  zombieApocalypse.moveUnits();
+
+  expect(zombieApocalypse.worldMap[9][ZOMBIE.x + 1].content).toBe(
+    TileContent.ZOMBIE,
+  );
+  expect(zombieApocalypse.worldMap[9][CREATURE_1.x + 1].content).toBe(
+    TileContent.ZOMBIE,
+  );
+  expect(zombieApocalypse.worldMap[CREATURE_2.y][CREATURE_2.x].content).toBe(
+    TileContent.CREATURE,
+  );
+  expect(zombieApocalypse.worldMap[CREATURE_3.y][CREATURE_3.x].content).toBe(
+    TileContent.CREATURE,
+  );
+
+  // Move left
+  zombieApocalypse.moveUnits();
+  expect(zombieApocalypse.worldMap[9][ZOMBIE.x].content).toBe(
+    TileContent.ZOMBIE,
+  );
+  expect(zombieApocalypse.worldMap[9][CREATURE_1.x].content).toBe(
+    TileContent.ZOMBIE,
+  );
+  expect(zombieApocalypse.worldMap[9][9].content).toBe(TileContent.ZOMBIE);
+  expect(zombieApocalypse.worldMap[CREATURE_3.y][CREATURE_3.x].content).toBe(
+    TileContent.CREATURE,
+  );
+
+  // Move down
+  zombieApocalypse.moveUnits();
+  expect(zombieApocalypse.worldMap[0][ZOMBIE.x].content).toBe(
+    TileContent.ZOMBIE,
+  );
+  expect(zombieApocalypse.worldMap[0][CREATURE_1.x].content).toBe(
+    TileContent.ZOMBIE,
+  );
+  expect(zombieApocalypse.worldMap[0][CREATURE_2.x].content).toBe(
+    TileContent.ZOMBIE,
+  );
+  expect(
+    zombieApocalypse.worldMap[CREATURE_3.y + 1][CREATURE_3.x].content,
+  ).toBe(TileContent.ZOMBIE);
+
+  // // Move right AGAIN
+  zombieApocalypse.moveUnits();
+  expect(zombieApocalypse.worldMap[0][0].content).toBe(TileContent.ZOMBIE);
+  expect(zombieApocalypse.worldMap[0][1].content).toBe(TileContent.ZOMBIE);
+  expect(zombieApocalypse.worldMap[0][2].content).toBe(TileContent.ZOMBIE);
+  expect(zombieApocalypse.worldMap[1][0].content).toBe(TileContent.ZOMBIE);
 });
