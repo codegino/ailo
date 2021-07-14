@@ -1,6 +1,6 @@
 import { move } from '../utils/movement';
 import { getUnits } from '../utils/world-map.util';
-import { TileContent, WorldMap } from './map.model';
+import { Coordinate, Tile, TileContent, WorldMap } from './map.model';
 import { MOVE_DIRECTION } from './movement-direction.enum';
 
 export class ZombieApocalypse {
@@ -27,6 +27,43 @@ export class ZombieApocalypse {
     console.log(log);
   }
 
+  private infectCreature(zombie: Tile, creatureCoordinate: Coordinate): void {
+    const newZombieCoordinate = move(
+      creatureCoordinate,
+      this.moves[this.currentMoveIndex],
+      this.dimension,
+    );
+
+    this.logEvent(
+      `zombie ${zombie.id} infected creature at (${creatureCoordinate.y},${creatureCoordinate.x})`,
+    );
+
+    const newZombie =
+      this.worldMap[newZombieCoordinate.y][newZombieCoordinate.x];
+
+    newZombie.next = {
+      unit: TileContent.ZOMBIE,
+      id: this.nextZombieId,
+    };
+
+    this.logEvent(
+      `new zombie ${this.nextZombieId} moved to (${newZombieCoordinate.y},${newZombieCoordinate.x})`,
+    );
+
+    if (newZombie.content === TileContent.CREATURE) {
+      this.infectCreature(
+        {
+          content: TileContent.ZOMBIE,
+          coordinate: newZombieCoordinate,
+          id: this.nextZombieId,
+          next: null,
+        },
+        newZombieCoordinate,
+      );
+    }
+    this.nextZombieId++;
+  }
+
   private mockMovement(): void {
     const zombies = getUnits(this.worldMap, TileContent.ZOMBIE);
 
@@ -47,30 +84,9 @@ export class ZombieApocalypse {
 
       newTile.next = { unit: TileContent.ZOMBIE, id: currentTile.id };
 
+      // During chain infection
       if (newTile.content === TileContent.CREATURE) {
-        const newZombieCoordinate = move(
-          newCoordinate,
-          this.moves[this.currentMoveIndex],
-          this.dimension,
-        );
-
-        this.logEvent(
-          `zombie ${currentTile.id} infected creature at (${newTile.coordinate.y},${newTile.coordinate.x})`,
-        );
-
-        const newZombie =
-          this.worldMap[newZombieCoordinate.y][newZombieCoordinate.x];
-
-        newZombie.next = {
-          unit: TileContent.ZOMBIE,
-          id: this.nextZombieId,
-        };
-
-        this.logEvent(
-          `new zombie ${this.nextZombieId} moved to (${newZombieCoordinate.y},${newZombieCoordinate.x})`,
-        );
-
-        this.nextZombieId++;
+        this.infectCreature(currentTile, newCoordinate);
       } else if (
         newTile.content === TileContent.EMPTY ||
         newTile.content === TileContent.ZOMBIE

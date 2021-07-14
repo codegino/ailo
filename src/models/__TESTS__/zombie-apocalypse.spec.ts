@@ -50,7 +50,7 @@ test('Zombie position should change when moving right', () => {
   );
 });
 
-test('creature should become a zombie when captured', () => {
+test('creature should become a zombie when infected', () => {
   const ZOMBIE: Coordinate = { x: 0, y: 0 };
   const CREATURE: Coordinate = { x: 1, y: 0 };
 
@@ -59,7 +59,7 @@ test('creature should become a zombie when captured', () => {
       zombie: ZOMBIE,
       creatures: [CREATURE],
     }),
-    [MOVE_DIRECTION.RIGHT, MOVE_DIRECTION.UP],
+    [MOVE_DIRECTION.RIGHT],
   );
 
   expect(zombieApocalypse.worldMap[ZOMBIE.y][ZOMBIE.x].content).toBe(
@@ -68,7 +68,69 @@ test('creature should become a zombie when captured', () => {
   expect(zombieApocalypse.worldMap[CREATURE.y][CREATURE.x].content).toBe(
     TileContent.CREATURE,
   );
-  expect(zombieApocalypse.worldMap[2][0].content).toBe(TileContent.EMPTY);
+  expect(zombieApocalypse.worldMap[CREATURE.y][CREATURE.x + 1].content).toBe(
+    TileContent.EMPTY,
+  );
+
+  zombieApocalypse.moveUnits();
+
+  expect(zombieApocalypse.worldMap[ZOMBIE.y][ZOMBIE.x].content).toBe(
+    TileContent.EMPTY,
+  );
+  expect(zombieApocalypse.worldMap[ZOMBIE.y][ZOMBIE.x + 1].content).toBe(
+    TileContent.ZOMBIE,
+  );
+  expect(zombieApocalypse.worldMap[CREATURE.y][CREATURE.x + 1].content).toBe(
+    TileContent.ZOMBIE,
+  );
+});
+
+it('multiple creature should become a zombies during chain infection', () => {
+  const ZOMBIE: Coordinate = { x: 0, y: 0 };
+  const CREATURE_1: Coordinate = { x: 1, y: 0 };
+  const CREATURE_2: Coordinate = { x: 2, y: 0 };
+  const CREATURE_3: Coordinate = { x: 3, y: 0 };
+
+  const zombieApocalypse = new ZombieApocalypse(
+    generateWorldSeed({
+      zombie: ZOMBIE,
+      creatures: [CREATURE_1, CREATURE_2, CREATURE_3],
+    }),
+    [MOVE_DIRECTION.RIGHT, MOVE_DIRECTION.UP],
+  );
+
+  expect(zombieApocalypse.worldMap[ZOMBIE.y][ZOMBIE.x].content).toBe(
+    TileContent.ZOMBIE,
+  );
+  expect(zombieApocalypse.worldMap[CREATURE_1.y][CREATURE_1.x].content).toBe(
+    TileContent.CREATURE,
+  );
+  expect(zombieApocalypse.worldMap[CREATURE_2.y][CREATURE_2.x].content).toBe(
+    TileContent.CREATURE,
+  );
+  expect(zombieApocalypse.worldMap[CREATURE_3.y][CREATURE_3.x].content).toBe(
+    TileContent.CREATURE,
+  );
+
+  zombieApocalypse.printMap();
+  zombieApocalypse.moveUnits();
+  zombieApocalypse.printMap();
+
+  expect(zombieApocalypse.worldMap[ZOMBIE.y][ZOMBIE.x].content).toBe(
+    TileContent.EMPTY,
+  );
+  expect(zombieApocalypse.worldMap[ZOMBIE.y][ZOMBIE.x + 1].content).toBe(
+    TileContent.ZOMBIE,
+  );
+  expect(
+    zombieApocalypse.worldMap[CREATURE_1.y][CREATURE_1.x + 1].content,
+  ).toBe(TileContent.ZOMBIE);
+  expect(
+    zombieApocalypse.worldMap[CREATURE_2.y][CREATURE_2.x + 1].content,
+  ).toBe(TileContent.ZOMBIE);
+  expect(
+    zombieApocalypse.worldMap[CREATURE_3.y][CREATURE_3.x + 1].content,
+  ).toBe(TileContent.ZOMBIE);
 });
 
 test('consecutive capture', () => {
@@ -158,7 +220,7 @@ test('consecutive capture', () => {
   expect(zombieApocalypse.worldMap[1][0].content).toBe(TileContent.ZOMBIE);
 });
 
-test('logger', () => {
+test('log events', () => {
   const ZOMBIE: Coordinate = { x: 0, y: 0 };
   const CREATURE_1: Coordinate = { x: 1, y: 0 };
   const CREATURE_2: Coordinate = { x: 0, y: 9 };
