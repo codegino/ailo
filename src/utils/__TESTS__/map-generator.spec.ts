@@ -29,6 +29,95 @@ test('get initial position of a single zombie', () => {
   );
 });
 
+test('should not allow conflicting zombies coordinates', () => {
+  const ZOMBIE_1 = {
+    x: 0,
+    y: 0,
+  };
+  const ZOMBIE_2 = {
+    x: 0,
+    y: 0,
+  };
+
+  expect(() => {
+    generateWorldSeed({
+      zombie: [ZOMBIE_1, ZOMBIE_2],
+    });
+  }).toThrowErrorMatchingInlineSnapshot(`"Zombie coordinates must be unique"`);
+});
+
+test('should not allow conflicting creatures coordinates', () => {
+  const CREATURE_1 = {
+    x: 1,
+    y: 1,
+  };
+  const CREATURE_2 = {
+    x: 1,
+    y: 1,
+  };
+
+  expect(() => {
+    generateWorldSeed({
+      creatures: [CREATURE_1, CREATURE_2],
+    });
+  }).toThrowErrorMatchingInlineSnapshot(
+    `"Creatures coordinates must be unique"`,
+  );
+});
+
+test('should not allow conflicting coordinates for single zombie and creatures', () => {
+  const ZOMBIE = {
+    x: 1,
+    y: 1,
+  };
+  const CREATURE_1 = {
+    x: 1,
+    y: 1,
+  };
+  const CREATURE_2 = {
+    x: 2,
+    y: 2,
+  };
+
+  expect(() => {
+    generateWorldSeed({
+      zombie: ZOMBIE,
+      creatures: [CREATURE_1, CREATURE_2],
+    });
+  }).toThrowErrorMatchingInlineSnapshot(
+    `"Zombie coordinate must not conflict with creatures"`,
+  );
+});
+
+test('should not allow conflicting coordinates for multiple zombies and creatures', () => {
+  const ZOMBIE_1 = {
+    x: 1,
+    y: 1,
+  };
+  const ZOMBIE_2 = {
+    x: 3,
+    y: 3,
+  };
+
+  const CREATURE_1 = {
+    x: 1,
+    y: 1,
+  };
+  const CREATURE_2 = {
+    x: 2,
+    y: 2,
+  };
+
+  expect(() => {
+    generateWorldSeed({
+      zombie: [ZOMBIE_1, ZOMBIE_2],
+      creatures: [CREATURE_1, CREATURE_2],
+    });
+  }).toThrowErrorMatchingInlineSnapshot(
+    `"Zombies coordinates must not conflict with creatures"`,
+  );
+});
+
 test('get initial positions of multiple zombies', () => {
   const MAP_DIMENSION = 10;
   const ZOMBIE_1 = {

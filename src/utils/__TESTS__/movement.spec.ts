@@ -117,7 +117,7 @@ test('Should throw an exception for invalid direction', () => {
       height: DIMENSION,
       width: DIMENSION,
     }),
-  ).toThrowError('Must have a valid direction');
+  ).toThrowErrorMatchingInlineSnapshot(`"Must have a valid direction"`);
 });
 
 test('Should throw an exception for negative coordinates', () => {
@@ -130,7 +130,9 @@ test('Should throw an exception for negative coordinates', () => {
       height: DIMENSION,
       width: DIMENSION,
     }),
-  ).toThrowError('Coordinates must only consists of positive value');
+  ).toThrowErrorMatchingInlineSnapshot(
+    `"Coordinates must only consists of positive value"`,
+  );
 });
 
 test('Should throw an exception if x is greater than or equal to width', () => {
@@ -169,5 +171,7 @@ test('Should throw an exception if dimension is less than 2', () => {
       height: DIMENSION,
       width: DIMENSION,
     }),
-  ).toThrowError(`Height and width must be greater than 1`);
+  ).toThrowErrorMatchingInlineSnapshot(
+    `"Height and width must be greater than 1"`,
+  );
 });
