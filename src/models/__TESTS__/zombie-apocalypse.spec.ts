@@ -177,45 +177,50 @@ test('logger', () => {
     ],
   );
 
-  const logger = jest.spyOn(zombieApocalypse, 'log').mockImplementation();
+  const logger = jest.spyOn(zombieApocalypse, 'logEvent').mockImplementation();
 
   // Move right
   zombieApocalypse.moveUnits();
-  expect(logger.mock.calls).toEqual([['zombie infected creature at (0,1)']]);
-  logger.mockClear();
-
-  // Move up
-  zombieApocalypse.moveUnits();
   expect(logger.mock.calls).toEqual([
-    ['zombie moved to (9,1)'],
-    ['zombie moved to (9,2)'],
+    ['zombie 1 infected creature at (0,1)'],
+    ['new zombie 2 moved to (0,2)'],
   ]);
   logger.mockClear();
 
-  // Move left
+  // // // Move up
   zombieApocalypse.moveUnits();
   expect(logger.mock.calls).toEqual([
-    ['zombie infected creature at (9,0)'],
-    ['zombie moved to (9,1)'],
+    ['zombie 1 moved to (9,1)'],
+    ['zombie 2 moved to (9,2)'],
   ]);
   logger.mockClear();
 
-  // Move left
+  // // // Move left
   zombieApocalypse.moveUnits();
   expect(logger.mock.calls).toEqual([
-    ['zombie moved to (0,0)'],
-    ['zombie moved to (0,1)'],
-    ['zombie infected creature at (0,9)'],
+    ['zombie 1 infected creature at (9,0)'],
+    ['new zombie 3 moved to (9,9)'],
+    ['zombie 2 moved to (9,1)'],
   ]);
   logger.mockClear();
 
-  // Move right AGAIN
+  // // // Move left
   zombieApocalypse.moveUnits();
   expect(logger.mock.calls).toEqual([
-    ['zombie moved to (0,1)'],
-    ['zombie moved to (0,2)'],
-    ['zombie moved to (0,0)'],
-    ['zombie moved to (1,0)'],
+    ['zombie 1 moved to (0,0)'],
+    ['zombie 2 moved to (0,1)'],
+    ['zombie 3 infected creature at (0,9)'],
+    ['new zombie 4 moved to (1,9)'],
+  ]);
+  logger.mockClear();
+
+  // // // Move right AGAIN
+  zombieApocalypse.moveUnits();
+  expect(logger.mock.calls).toEqual([
+    ['zombie 1 moved to (0,1)'],
+    ['zombie 2 moved to (0,2)'],
+    ['zombie 3 moved to (0,0)'],
+    ['zombie 4 moved to (1,0)'],
   ]);
   logger.mockRestore();
 });

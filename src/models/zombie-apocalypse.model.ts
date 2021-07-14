@@ -5,6 +5,7 @@ import { MOVE_DIRECTION } from './movement-direction.enum';
 
 export class ZombieApocalypse {
   public currentMoveIndex = 0;
+  public nextZombieId: number;
   public readonly dimension: {
     height: number;
     width: number;
@@ -18,9 +19,11 @@ export class ZombieApocalypse {
       height: worldMap.length,
       width: worldMap[0].length,
     };
+
+    this.nextZombieId = getUnits(this.worldMap, TileContent.ZOMBIE).length + 1;
   }
 
-  public log(log: string): void {
+  public logEvent(log: string): void {
     console.log(log);
   }
 
@@ -35,10 +38,14 @@ export class ZombieApocalypse {
       );
 
       const newTile = this.worldMap[newCoordinate.y][newCoordinate.x];
-      const newCurrentTile = this.worldMap[z.y][z.x];
+      const currentTile = this.worldMap[z.y][z.x];
 
-      newCurrentTile.next = newCurrentTile?.next ?? TileContent.EMPTY;
-      newTile.next = TileContent.ZOMBIE;
+      currentTile.next = currentTile?.next ?? {
+        unit: TileContent.EMPTY,
+        id: null,
+      };
+
+      newTile.next = { unit: TileContent.ZOMBIE, id: currentTile.id };
 
       if (newTile.content === TileContent.CREATURE) {
         const newZombieCoordinate = move(
@@ -47,29 +54,41 @@ export class ZombieApocalypse {
           this.dimension,
         );
 
-        this.log(
-          `zombie infected creature at (${newTile.coordinate.y},${newTile.coordinate.x})`,
+        this.logEvent(
+          `zombie ${currentTile.id} infected creature at (${newTile.coordinate.y},${newTile.coordinate.x})`,
         );
 
-        this.worldMap[newZombieCoordinate.y][newZombieCoordinate.x].next =
-          TileContent.ZOMBIE;
+        const newZombie =
+          this.worldMap[newZombieCoordinate.y][newZombieCoordinate.x];
+
+        newZombie.next = {
+          unit: TileContent.ZOMBIE,
+          id: this.nextZombieId,
+        };
+
+        this.logEvent(
+          `new zombie ${this.nextZombieId} moved to (${newZombieCoordinate.y},${newZombieCoordinate.x})`,
+        );
+
+        this.nextZombieId++;
       } else if (
         newTile.content === TileContent.EMPTY ||
         newTile.content === TileContent.ZOMBIE
       ) {
-        this.log(
-          `zombie moved to (${newTile.coordinate.y},${newTile.coordinate.x})`,
+        this.logEvent(
+          `zombie ${currentTile.id} moved to (${newTile.coordinate.y},${newTile.coordinate.x})`,
         );
       }
     });
   }
 
-  private initiateMovement(): void {
+  private initiateUpdate(): void {
     this.worldMap = this.worldMap.map((row) => {
       return row.map((tile) => ({
         ...tile,
         next: null,
-        content: tile?.next ?? tile.content,
+        content: tile?.next?.unit ?? tile.content,
+        id: tile?.next?.unit === TileContent.ZOMBIE ? tile.next.id : null,
       }));
     });
   }
@@ -83,7 +102,7 @@ export class ZombieApocalypse {
             row.content === TileContent.CREATURE
               ? 'C'
               : row.content === TileContent.ZOMBIE
-              ? 'Z'
+              ? row.id
               : ' ';
 
           return `[${tile}]`;
@@ -97,7 +116,7 @@ export class ZombieApocalypse {
 
   public moveUnits(): void {
     this.mockMovement();
-    this.initiateMovement();
+    this.initiateUpdate();
 
     if (this.currentMoveIndex === this.moves.length - 1) {
       this.currentMoveIndex = 0;

@@ -36,6 +36,8 @@ export function generateMap(
     throw new Error('Creatures coordinates must be unique');
   }
 
+  let zombieId = 0;
+
   // Code for nomal cases
   return worldMap.map((row, y): Tile[] => {
     return row.map((_, x) => {
@@ -58,6 +60,7 @@ export function generateMap(
           ? TileContent.CREATURE
           : TileContent.EMPTY,
         next: null,
+        id: isZombie ? ++zombieId : null,
         coordinate: {
           x,
           y,
