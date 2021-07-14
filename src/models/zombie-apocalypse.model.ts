@@ -20,6 +20,10 @@ export class ZombieApocalypse {
     };
   }
 
+  public log(log: string): void {
+    console.log(log);
+  }
+
   private mockMovement(): void {
     const zombies = getUnits(this.worldMap, TileContent.ZOMBIE);
 
@@ -43,8 +47,19 @@ export class ZombieApocalypse {
           this.dimension,
         );
 
+        this.log(
+          `zombie infected creature at (${newTile.coordinate.y},${newTile.coordinate.x})`,
+        );
+
         this.worldMap[newZombieCoordinate.y][newZombieCoordinate.x].next =
           TileContent.ZOMBIE;
+      } else if (
+        newTile.content === TileContent.EMPTY ||
+        newTile.content === TileContent.ZOMBIE
+      ) {
+        this.log(
+          `zombie moved to (${newTile.coordinate.y},${newTile.coordinate.x})`,
+        );
       }
     });
   }
