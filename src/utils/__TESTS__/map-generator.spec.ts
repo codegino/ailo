@@ -13,7 +13,7 @@ test('generate a 10x10 world', () => {
   });
 });
 
-test('get initial position of the zombie', () => {
+test('get initial position of a single zombie', () => {
   const MAP_DIMENSION = faker.datatype.number(10);
   const zombieCoordinate = {
     x: faker.datatype.number(MAP_DIMENSION - 1),
@@ -27,6 +27,31 @@ test('get initial position of the zombie', () => {
   expect(worldMap[zombieCoordinate.y][zombieCoordinate.x].content).toBe(
     TileContent.ZOMBIE,
   );
+});
+
+test('get initial positions of multiple zombies', () => {
+  const MAP_DIMENSION = 10;
+  const ZOMBIE_1 = {
+    x: 0,
+    y: 0,
+  };
+  const ZOMBIE_2 = {
+    x: 1,
+    y: 1,
+  };
+  const ZOMBIE_3 = {
+    x: 2,
+    y: 1,
+  };
+
+  const worldMap = generateWorldSeed({
+    dimension: MAP_DIMENSION,
+    zombie: [ZOMBIE_1, ZOMBIE_2, ZOMBIE_3],
+  });
+
+  expect(worldMap[ZOMBIE_1.y][ZOMBIE_1.x].content).toBe(TileContent.ZOMBIE);
+  expect(worldMap[ZOMBIE_2.y][ZOMBIE_2.x].content).toBe(TileContent.ZOMBIE);
+  expect(worldMap[ZOMBIE_3.y][ZOMBIE_3.x].content).toBe(TileContent.ZOMBIE);
 });
 
 test('get initial position of the creatures', () => {

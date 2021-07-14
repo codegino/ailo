@@ -13,24 +13,16 @@ test('Get all zombie coordinates', () => {
   expect(zombies).toEqual([ZOMBIE]);
 });
 
-// test('Get all creatures coordinates', () => {
-//   const CREATURES: Coordinate[] = [
-//     { x: 1, y: 1 },
-//     { x: 2, y: 1 },
-//     { x: 3, y: 2 },
-//   ];
+test('Get all creatures coordinates', () => {
+  const CREATURES: Coordinate[] = [
+    { x: 1, y: 1 },
+    { x: 2, y: 1 },
+    { x: 3, y: 2 },
+  ];
 
-//   const zombieApocalypse = new ZombieApocalypse(
-//     generateWorldSeed({ creatures: CREATURES }),
-//     [
-//       MOVE_DIRECTION.DOWN,
-//       MOVE_DIRECTION.LEFT,
-//       MOVE_DIRECTION.UP,
-//       MOVE_DIRECTION.RIGHT,
-//     ]
-//   );
+  const worldMap = generateWorldSeed({ creatures: CREATURES });
 
-//   const zombies = zombieApocalypse.getUnits(TileContent.CREATURE);
+  const creatures = getUnits(worldMap, TileContent.CREATURE);
 
-//   expect(zombies).toEqual([CREATURES]);
-// });
+  expect(creatures).toEqual(CREATURES);
+});

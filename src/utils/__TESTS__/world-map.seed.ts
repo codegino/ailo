@@ -7,7 +7,7 @@ export function generateWorldSeed({
   creatures = [],
 }: {
   dimension?: number;
-  zombie?: Coordinate;
+  zombie?: Coordinate | Coordinate[];
   creatures?: Coordinate[];
 }): WorldMap {
   return generateMap(dimension, zombie, creatures);
