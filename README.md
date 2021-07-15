@@ -17,7 +17,7 @@ docker build . -t ailo/zombie-app
 docker run -it ailo/zombie-app
 ```
 
-> NOTE: Make sure to enter correct format when inputting values via CLI. I did not invest much time in parsing user input due to reason mentioned below.
+> NOTE: Make sure to enter correct format when inputting values via CLI. I did not invest much time in parsing user input due to time constraint.
 
 ### Running tests
 
@@ -37,3 +37,16 @@ npm run test:coverage
 > Go to `coverage/lcov-report/src` then open `index.html` to see the coverage result
 
 > NOTE: I intentionally did not add unit tests and check edge cases for the `main.js` and `printing map function` as they are mostly utilities for demo purposes. For REAL projects these will surely be tested.
+
+## Assumptions
+
+- A tile should initally hold `1` zombie or `1` creature `ONLY`
+- A tile can hold multiple zombies during simulation
+- Creature will `NOT` move immediately after being infected
+- The program will continue to run until there's a zombie with remaining move
+
+## CLI Map guide
+
+- Creatures are represented by the letter `C`
+- Tile with zombies is represented by the number of zombies in a tile
+- Empty tiles are represented by a space
