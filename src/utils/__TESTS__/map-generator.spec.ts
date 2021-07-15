@@ -2,6 +2,7 @@ import { Coordinate } from '../../models/map.model';
 import * as faker from 'faker';
 import { generateWorldSeed } from './world-map.seed';
 import { Creature, Zombie } from '../../models/units.model';
+import { resetId } from '../id-generator';
 
 test('generate a 10x10 world', () => {
   const MAP_DIMENSION = faker.datatype.number(100);
@@ -187,4 +188,8 @@ test('get initial position of the creatures', () => {
   expect(worldMap[CREATURE_2.y][CREATURE_2.x].units).toEqual([
     new Creature({ x: CREATURE_2.x, y: CREATURE_2.y }),
   ]);
+});
+
+beforeEach(() => {
+  resetId();
 });

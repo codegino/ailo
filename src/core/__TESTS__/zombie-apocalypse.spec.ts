@@ -4,6 +4,11 @@ import { generateWorldSeed } from '../../utils/__TESTS__/world-map.seed';
 import { ZombieApocalypse } from '../zombie-apocalypse';
 import * as faker from 'faker';
 import { Coordinate } from '../../models/map.model';
+import { resetId } from '../../utils/id-generator';
+
+beforeEach(() => {
+  resetId();
+});
 
 test('Zombie position should change when moving', () => {
   const DIMENSION = faker.datatype.number({ min: 2, max: 10 });

@@ -84,7 +84,7 @@ async function setupEnvironment() {
       name: 'creatures',
       message: 'What is the initial coordinates of creatures(y,x)?',
       type: '',
-      default: '0,3;1,4',
+      default: '0,1;0,2;0,3;1,2;1,3',
     },
   ]);
 

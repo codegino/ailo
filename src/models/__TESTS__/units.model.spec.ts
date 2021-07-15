@@ -3,6 +3,7 @@ import { MOVE_DIRECTION } from '../movement-direction.enum';
 import { Creature, Zombie } from '../units.model';
 import * as faker from 'faker';
 import { generateId } from '../../utils/id-generator';
+import { resetId } from '../../utils/id-generator';
 
 it('should update coordinates when a zombie move', () => {
   const x = 0;
@@ -54,4 +55,8 @@ it('should create new zombie when a creature is infected', () => {
   const newZombie = zombie.infectCreature(creature);
 
   expect(newZombie).toEqual(new Zombie(creature.coordinates, 2, [...moves]));
+});
+
+beforeEach(() => {
+  resetId();
 });
