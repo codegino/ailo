@@ -3,37 +3,50 @@
 // import { MOVE_DIRECTION } from '../../models/movement-direction.enum';
 // import { ZombieApocalypse } from '../zombie-apocalypse.model';
 
+import { MOVE_DIRECTION } from '../../models/movement-direction.enum';
+import { move } from '../../utils/movement';
+// import { Zombie } from '../../models/units.model';
+// import { Zombie } from '../../models/units.model';
+// import { generateId } from '../../utils/id-generator';
+import { generateWorldSeed } from '../../utils/__TESTS__/world-map.seed';
+import { ZombieApocalypse } from '../zombie-apocalypse.model';
+import * as faker from 'faker';
+
 test('asdf', () => {
   expect(1).toBe(1);
 });
 
-// test('Zombie position should change when moving right', () => {
-//   const ZOMBIE: Coordinate = { x: 0, y: 0 };
-//   const ZOMBIE_NEXT: Coordinate = { x: 1, y: 0 };
+test('Zombie position should change when moving', () => {
+  const DIMENSION = faker.datatype.number({ min: 2, max: 10 });
+  const ZOMBIE = {
+    x: faker.datatype.number({ min: 0, max: DIMENSION - 1 }),
+    y: faker.datatype.number({ min: 0, max: DIMENSION - 1 }),
+  };
+  const DIRECTION = faker.random.arrayElement(Object.values(MOVE_DIRECTION));
 
-//   const zombieApocalypse = new ZombieApocalypse(
-//     generateWorldSeed({
-//       zombie: ZOMBIE,
-//     }),
-//     [MOVE_DIRECTION.RIGHT],
-//   );
+  const zombieApocalypse = new ZombieApocalypse(
+    generateWorldSeed({
+      zombie: ZOMBIE,
+      moves: [DIRECTION],
+    }),
+    [DIRECTION],
+  );
 
-//   expect(zombieApocalypse.worldMap[ZOMBIE.y][ZOMBIE.x].content).toBe(
-//     TileContent.ZOMBIE,
-//   );
-//   expect(zombieApocalypse.worldMap[ZOMBIE_NEXT.y][ZOMBIE_NEXT.x].content).toBe(
-//     TileContent.EMPTY,
-//   );
+  const { x: newX, y: newY } = move(
+    ZOMBIE,
+    DIRECTION,
+    zombieApocalypse.dimension,
+  );
 
-//   zombieApocalypse.moveUnits();
+  zombieApocalypse.moveUnits();
 
-//   expect(zombieApocalypse.worldMap[ZOMBIE.y][ZOMBIE.x].content).toBe(
-//     TileContent.EMPTY,
-//   );
-//   expect(zombieApocalypse.worldMap[ZOMBIE_NEXT.y][ZOMBIE_NEXT.x].content).toBe(
-//     TileContent.ZOMBIE,
-//   );
-// });
+  expect(zombieApocalypse.worldMap[ZOMBIE.y][ZOMBIE.x].units).toEqual([]);
+  expect(zombieApocalypse.worldMap[newY][newX].units[0]).toEqual({
+    id: 1,
+    coordinates: { x: newX, y: newY },
+    moves: [],
+  });
+});
 
 // test('creature should become a zombie when infected', () => {
 //   const ZOMBIE: Coordinate = { x: 0, y: 0 };
@@ -274,15 +287,4 @@ test('asdf', () => {
 //     ['zombie 4 moved to (1,0)'],
 //   ]);
 //   logger.mockRestore();
-// });
-
-// // This is to remove log polution during test executions
-// // This is not normally done during production
-// // For this exercise only
-// beforeEach(() => {
-//   jest.spyOn(global.console, 'log').mockImplementation();
-// });
-
-// afterEach(() => {
-//   jest.spyOn(global.console, 'log').mockRestore();
 // });

@@ -1,4 +1,6 @@
-import { Coordinate } from './map.model';
+import { generateId } from '../utils/id-generator';
+import { move } from '../utils/movement';
+import { Coordinate, WorldMap } from './map.model';
 import { MOVE_DIRECTION } from './movement-direction.enum';
 
 export interface Unit {
@@ -12,8 +14,29 @@ export class Zombie implements Unit {
     public moves: MOVE_DIRECTION[],
   ) {}
 
-  infectCreature(creature: Creature): Zombie {
-    return new Zombie(creature.coordinates, this.id + 1, this.moves);
+  public infectCreature(creature: Creature): Zombie {
+    return new Zombie(creature.coordinates, generateId(), this.moves);
+  }
+
+  public move(map: WorldMap): void {
+    const currentMove = this.moves.shift();
+    if (currentMove) {
+      this.coordinates = move(this.coordinates, currentMove, {
+        height: map.length,
+        width: map[0].length,
+      });
+    }
+  }
+
+  public mockMove(map: WorldMap): Coordinate {
+    const currentMove = this.moves[0];
+    if (currentMove) {
+      return move(this.coordinates, currentMove, {
+        height: map.length,
+        width: map[0].length,
+      });
+    }
+    return null;
   }
 }
 

@@ -13,9 +13,7 @@ export enum TileContent {
 
 export type Tile = {
   coordinate: Coordinate;
-  content?: TileContent;
   next: { unit: TileContent; id: number } | null;
-  id?: number;
   units: Unit[];
 };
 

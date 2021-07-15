@@ -1,21 +1,7 @@
-import { Coordinate, TileContent, WorldMap } from '../models/map.model';
+import { WorldMap } from '../models/map.model';
 import { Creature, Unit, Zombie } from '../models/units.model';
 
-export function getUnits(worldMap: WorldMap, unit: TileContent): Coordinate[] {
-  const units: Coordinate[] = [];
-
-  worldMap.forEach((row) => {
-    row.forEach((tile) => {
-      if (tile.content === unit) {
-        units.push(tile.coordinate);
-      }
-    });
-  });
-
-  return units;
-}
-
-export function getZombies(
+export function getUnits(
   worldMap: WorldMap,
   type: 'zombie' | 'creature',
 ): Unit[] {

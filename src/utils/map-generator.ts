@@ -7,7 +7,7 @@ export function generateMap(
   dimension: number,
   zombies: Coordinate | Coordinate[],
   creatures: Coordinate[],
-  moves: MOVE_DIRECTION[] = [],
+  moves: MOVE_DIRECTION[],
 ): WorldMap {
   const worldMap: WorldMap = Array(dimension).fill(Array(dimension).fill(null));
 
