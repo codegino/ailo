@@ -58,6 +58,7 @@ export class ZombieApocalypse {
           coordinate: newZombieCoordinate,
           id: this.nextZombieId,
           next: null,
+          units: [],
         },
         newZombieCoordinate,
       );

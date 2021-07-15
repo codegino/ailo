@@ -1,6 +1,7 @@
-import { TileContent, Coordinate } from '../../models/map.model';
+import { Coordinate } from '../../models/map.model';
 import * as faker from 'faker';
 import { generateWorldSeed } from './world-map.seed';
+import { Creature, Zombie } from '../../models/units.model';
 
 test('generate a 10x10 world', () => {
   const MAP_DIMENSION = faker.datatype.number(100);
@@ -24,9 +25,9 @@ test('get initial position of a single zombie', () => {
     zombie: zombieCoordinate,
   });
 
-  expect(worldMap[zombieCoordinate.y][zombieCoordinate.x].content).toBe(
-    TileContent.ZOMBIE,
-  );
+  expect(worldMap[zombieCoordinate.y][zombieCoordinate.x].units).toEqual([
+    new Zombie({ x: zombieCoordinate.x, y: zombieCoordinate.y }, 1, []),
+  ]);
 });
 
 test('other tile should be marked as empty', () => {
@@ -40,7 +41,7 @@ test('other tile should be marked as empty', () => {
     zombie: ZOMBIE,
   });
 
-  expect(worldMap[1][1].content).toBe(TileContent.EMPTY);
+  expect(worldMap[1][1].units).toEqual([]);
 });
 
 test('should not allow conflicting zombies coordinates', () => {
@@ -152,9 +153,15 @@ test('get initial positions of multiple zombies', () => {
     zombie: [ZOMBIE_1, ZOMBIE_2, ZOMBIE_3],
   });
 
-  expect(worldMap[ZOMBIE_1.y][ZOMBIE_1.x].content).toBe(TileContent.ZOMBIE);
-  expect(worldMap[ZOMBIE_2.y][ZOMBIE_2.x].content).toBe(TileContent.ZOMBIE);
-  expect(worldMap[ZOMBIE_3.y][ZOMBIE_3.x].content).toBe(TileContent.ZOMBIE);
+  expect(worldMap[ZOMBIE_1.y][ZOMBIE_1.x].units).toEqual([
+    new Zombie({ x: ZOMBIE_1.x, y: ZOMBIE_1.y }, 1, []),
+  ]);
+  expect(worldMap[ZOMBIE_2.y][ZOMBIE_2.x].units).toEqual([
+    new Zombie({ x: ZOMBIE_2.x, y: ZOMBIE_2.y }, 2, []),
+  ]);
+  expect(worldMap[ZOMBIE_3.y][ZOMBIE_3.x].units).toEqual([
+    new Zombie({ x: ZOMBIE_3.x, y: ZOMBIE_3.y }, 3, []),
+  ]);
 });
 
 test('get initial position of the creatures', () => {
@@ -173,11 +180,11 @@ test('get initial position of the creatures', () => {
     creatures: [CREATURE_1, CREATURE_2],
   });
 
-  expect(worldMap[CREATURE_1.y][CREATURE_1.x].content).toBe(
-    TileContent.CREATURE,
-  );
+  expect(worldMap[CREATURE_1.y][CREATURE_1.x].units).toEqual([
+    new Creature({ x: CREATURE_1.x, y: CREATURE_1.y }),
+  ]);
 
-  expect(worldMap[CREATURE_2.y][CREATURE_2.x].content).toBe(
-    TileContent.CREATURE,
-  );
+  expect(worldMap[CREATURE_2.y][CREATURE_2.x].units).toEqual([
+    new Creature({ x: CREATURE_2.x, y: CREATURE_2.y }),
+  ]);
 });

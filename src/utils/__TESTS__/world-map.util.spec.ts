@@ -1,5 +1,6 @@
 import { Coordinate, TileContent } from '../../models/map.model';
-import { getUnits } from '../world-map.util';
+import { Creature, Zombie } from '../../models/units.model';
+import { getZombies } from '../world-map.util';
 import { generateWorldSeed } from './world-map.seed';
 
 test('Get all zombie coordinates', () => {
@@ -8,9 +9,9 @@ test('Get all zombie coordinates', () => {
     zombie: ZOMBIE,
   });
 
-  const zombies = getUnits(worldMap, TileContent.ZOMBIE);
+  const zombies = getZombies(worldMap, TileContent.ZOMBIE);
 
-  expect(zombies).toEqual([ZOMBIE]);
+  expect(zombies).toEqual([new Zombie({ x: ZOMBIE.x, y: ZOMBIE.y }, 1, [])]);
 });
 
 test('Get all creatures coordinates', () => {
@@ -22,7 +23,11 @@ test('Get all creatures coordinates', () => {
 
   const worldMap = generateWorldSeed({ creatures: CREATURES });
 
-  const creatures = getUnits(worldMap, TileContent.CREATURE);
+  const creatures = getZombies(worldMap, TileContent.CREATURE);
 
-  expect(creatures).toEqual(CREATURES);
+  expect(creatures).toEqual([
+    new Creature({ x: CREATURES[0].x, y: CREATURES[0].y }),
+    new Creature({ x: CREATURES[1].x, y: CREATURES[1].y }),
+    new Creature({ x: CREATURES[2].x, y: CREATURES[2].y }),
+  ]);
 });

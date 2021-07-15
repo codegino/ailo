@@ -1,3 +1,5 @@
+import { Unit } from './units.model';
+
 export type Coordinate = {
   x: number;
   y: number;
@@ -11,9 +13,10 @@ export enum TileContent {
 
 export type Tile = {
   coordinate: Coordinate;
-  content: TileContent;
+  content?: TileContent;
   next: { unit: TileContent; id: number } | null;
-  id: number;
+  id?: number;
+  units: Unit[];
 };
 
 export type WorldMap = Tile[][];

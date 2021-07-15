@@ -1,9 +1,12 @@
-import { Coordinate, Tile, TileContent, WorldMap } from '../models/map.model';
+import { Coordinate, Tile, WorldMap } from '../models/map.model';
+import { MOVE_DIRECTION } from '../models/movement-direction.enum';
+import { Creature, Unit, Zombie } from '../models/units.model';
 
 export function generateMap(
   dimension: number,
   zombies: Coordinate | Coordinate[],
   creatures: Coordinate[],
+  moves: MOVE_DIRECTION[] = [],
 ): WorldMap {
   const worldMap: WorldMap = Array(dimension).fill(Array(dimension).fill(null));
 
@@ -32,6 +35,7 @@ export function generateMap(
   }
 
   const uniqueCreatures = new Set(creatures.map((c) => `${c.x}-${c.y}`));
+
   if (uniqueCreatures.size !== creatures.length) {
     throw new Error('Creatures coordinates must be unique');
   }
@@ -41,6 +45,8 @@ export function generateMap(
   // Code for nomal cases
   return worldMap.map((row, y): Tile[] => {
     return row.map((_, x) => {
+      const units: Unit[] = [];
+
       let isZombie: boolean;
 
       if (zombies instanceof Array) {
@@ -53,14 +59,15 @@ export function generateMap(
         (creature) => creature.x === x && creature.y === y,
       );
 
+      if (isZombie) {
+        units.push(new Zombie({ x, y }, ++zombieId, moves));
+      } else if (isCreature) {
+        units.push(new Creature({ x, y }));
+      }
+
       return {
-        content: isZombie
-          ? TileContent.ZOMBIE
-          : isCreature
-          ? TileContent.CREATURE
-          : TileContent.EMPTY,
         next: null,
-        id: isZombie ? ++zombieId : null,
+        units,
         coordinate: {
           x,
           y,
