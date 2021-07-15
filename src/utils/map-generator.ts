@@ -1,6 +1,7 @@
 import { Coordinate, Tile, WorldMap } from '../models/map.model';
 import { MOVE_DIRECTION } from '../models/movement-direction.enum';
 import { Creature, Unit, Zombie } from '../models/units.model';
+import { generateId } from './id-generator';
 
 export function generateMap(
   dimension: number,
@@ -40,8 +41,6 @@ export function generateMap(
     throw new Error('Creatures coordinates must be unique');
   }
 
-  let zombieId = 0;
-
   // Code for nomal cases
   return worldMap.map((row, y): Tile[] => {
     return row.map((_, x) => {
@@ -60,7 +59,7 @@ export function generateMap(
       );
 
       if (isZombie) {
-        units.push(new Zombie({ x, y }, ++zombieId, moves));
+        units.push(new Zombie({ x, y }, generateId(), moves));
       } else if (isCreature) {
         units.push(new Creature({ x, y }));
       }
