@@ -10,7 +10,7 @@ beforeEach(() => {
   resetId();
 });
 
-test('Zombie position should change when moving', () => {
+test('zombie position should change when moving', () => {
   const DIMENSION = faker.datatype.number({ min: 2, max: 10 });
   const ZOMBIE: Coordinate = {
     x: faker.datatype.number({ min: 0, max: DIMENSION - 1 }),
@@ -123,156 +123,237 @@ test('creature should become a zombie when infected', () => {
   ]);
 });
 
-// test('consecutive capture', () => {
-//   const ZOMBIE: Coordinate = { x: 0, y: 0 };
-//   const CREATURE_1: Coordinate = { x: 1, y: 0 };
-//   const CREATURE_2: Coordinate = { x: 0, y: 9 };
-//   const CREATURE_3: Coordinate = { x: 9, y: 0 };
+test('log events', () => {
+  const ZOMBIE: Coordinate = { x: 0, y: 1 };
+  const CREATURE_1: Coordinate = { x: 1, y: 0 };
+  const CREATURE_2: Coordinate = { x: 1, y: 9 };
+  const CREATURE_3: Coordinate = { x: 2, y: 9 };
+  const MOVESET = [
+    MOVE_DIRECTION.UP,
+    MOVE_DIRECTION.RIGHT,
+    MOVE_DIRECTION.LEFT,
+    MOVE_DIRECTION.DOWN,
+  ];
 
-//   const zombieApocalypse = new ZombieApocalypse(
-//     generateWorldSeed({
-//       zombie: ZOMBIE,
-//       creatures: [CREATURE_1, CREATURE_2, CREATURE_3],
-//     }),
-//     [
-//       MOVE_DIRECTION.RIGHT,
-//       MOVE_DIRECTION.UP,
-//       MOVE_DIRECTION.LEFT,
-//       MOVE_DIRECTION.DOWN,
-//     ],
-//   );
+  const zombieApocalypse = new ZombieApocalypse(
+    generateWorldSeed({
+      zombie: ZOMBIE,
+      creatures: [CREATURE_1, CREATURE_2, CREATURE_3],
+      moves: [...MOVESET],
+    }),
+    [...MOVESET],
+  );
 
-//   // Move to right
-//   zombieApocalypse.moveUnits();
+  const logger = jest.spyOn(zombieApocalypse, 'logEvent').mockImplementation();
+  jest.spyOn(global.console, 'log').mockRestore();
 
-//   expect(zombieApocalypse.worldMap[ZOMBIE.y][ZOMBIE.x + 1].content).toBe(
-//     TileContent.ZOMBIE,
-//   );
-//   expect(
-//     zombieApocalypse.worldMap[CREATURE_1.y][CREATURE_1.x + 1].content,
-//   ).toBe(TileContent.ZOMBIE);
-//   expect(zombieApocalypse.worldMap[CREATURE_2.y][CREATURE_2.x].content).toBe(
-//     TileContent.CREATURE,
-//   );
-//   expect(zombieApocalypse.worldMap[CREATURE_3.y][CREATURE_3.x].content).toBe(
-//     TileContent.CREATURE,
-//   );
+  zombieApocalypse.moveUnits();
+  expect(logger.mock.calls).toEqual([['zombie 1 moved to (0,0)']]);
+  logger.mockClear();
 
-//   // Move up
-//   zombieApocalypse.moveUnits();
+  zombieApocalypse.moveUnits();
+  expect(logger.mock.calls).toEqual([['zombie 1 infected creature at (0,1)']]);
+  logger.mockClear();
 
-//   expect(zombieApocalypse.worldMap[9][ZOMBIE.x + 1].content).toBe(
-//     TileContent.ZOMBIE,
-//   );
-//   expect(zombieApocalypse.worldMap[9][CREATURE_1.x + 1].content).toBe(
-//     TileContent.ZOMBIE,
-//   );
-//   expect(zombieApocalypse.worldMap[CREATURE_2.y][CREATURE_2.x].content).toBe(
-//     TileContent.CREATURE,
-//   );
-//   expect(zombieApocalypse.worldMap[CREATURE_3.y][CREATURE_3.x].content).toBe(
-//     TileContent.CREATURE,
-//   );
+  zombieApocalypse.moveUnits();
+  expect(logger.mock.calls).toEqual([
+    ['zombie 1 moved to (0,0)'],
+    ['zombie 2 infected creature at (9,1)'],
+  ]);
+  logger.mockClear();
 
-//   // Move left
-//   zombieApocalypse.moveUnits();
-//   expect(zombieApocalypse.worldMap[9][ZOMBIE.x].content).toBe(
-//     TileContent.ZOMBIE,
-//   );
-//   expect(zombieApocalypse.worldMap[9][CREATURE_1.x].content).toBe(
-//     TileContent.ZOMBIE,
-//   );
-//   expect(zombieApocalypse.worldMap[9][9].content).toBe(TileContent.ZOMBIE);
-//   expect(zombieApocalypse.worldMap[CREATURE_3.y][CREATURE_3.x].content).toBe(
-//     TileContent.CREATURE,
-//   );
+  zombieApocalypse.moveUnits();
+  expect(logger.mock.calls).toEqual([
+    ['zombie 1 moved to (1,0)'],
+    ['zombie 2 infected creature at (9,2)'],
+    ['zombie 3 moved to (8,1)'],
+  ]);
+  logger.mockClear();
 
-//   // Move down
-//   zombieApocalypse.moveUnits();
-//   expect(zombieApocalypse.worldMap[0][ZOMBIE.x].content).toBe(
-//     TileContent.ZOMBIE,
-//   );
-//   expect(zombieApocalypse.worldMap[0][CREATURE_1.x].content).toBe(
-//     TileContent.ZOMBIE,
-//   );
-//   expect(zombieApocalypse.worldMap[0][CREATURE_2.x].content).toBe(
-//     TileContent.ZOMBIE,
-//   );
-//   expect(
-//     zombieApocalypse.worldMap[CREATURE_3.y + 1][CREATURE_3.x].content,
-//   ).toBe(TileContent.ZOMBIE);
+  zombieApocalypse.moveUnits();
+  expect(logger.mock.calls).toEqual([
+    ['zombie 2 moved to (9,1)'],
+    ['zombie 3 moved to (8,2)'],
+    ['zombie 4 moved to (8,2)'],
+  ]);
+  logger.mockClear();
 
-//   // // Move right AGAIN
-//   zombieApocalypse.moveUnits();
-//   expect(zombieApocalypse.worldMap[0][0].content).toBe(TileContent.ZOMBIE);
-//   expect(zombieApocalypse.worldMap[0][1].content).toBe(TileContent.ZOMBIE);
-//   expect(zombieApocalypse.worldMap[0][2].content).toBe(TileContent.ZOMBIE);
-//   expect(zombieApocalypse.worldMap[1][0].content).toBe(TileContent.ZOMBIE);
-// });
+  zombieApocalypse.moveUnits();
+  expect(logger.mock.calls).toEqual([
+    ['zombie 2 moved to (0,1)'],
+    ['zombie 3 moved to (8,1)'],
+    ['zombie 4 moved to (8,3)'],
+  ]);
+  logger.mockClear();
 
-// test('log events', () => {
-//   const ZOMBIE: Coordinate = { x: 0, y: 0 };
-//   const CREATURE_1: Coordinate = { x: 1, y: 0 };
-//   const CREATURE_2: Coordinate = { x: 0, y: 9 };
-//   const CREATURE_3: Coordinate = { x: 9, y: 0 };
+  zombieApocalypse.moveUnits();
+  expect(logger.mock.calls).toEqual([
+    ['zombie 3 moved to (9,1)'],
+    ['zombie 4 moved to (8,2)'],
+  ]);
+  logger.mockClear();
 
-//   const zombieApocalypse = new ZombieApocalypse(
-//     generateWorldSeed({
-//       zombie: ZOMBIE,
-//       creatures: [CREATURE_1, CREATURE_2, CREATURE_3],
-//     }),
-//     [
-//       MOVE_DIRECTION.RIGHT,
-//       MOVE_DIRECTION.UP,
-//       MOVE_DIRECTION.LEFT,
-//       MOVE_DIRECTION.DOWN,
-//     ],
-//   );
+  zombieApocalypse.moveUnits();
+  expect(logger.mock.calls).toEqual([['zombie 4 moved to (9,2)']]);
+  logger.mockClear();
+});
 
-//   const logger = jest.spyOn(zombieApocalypse, 'logEvent').mockImplementation();
+test('end to end events with no remaining creatures', () => {
+  const ZOMBIE: Coordinate = { x: 0, y: 1 };
+  const CREATURE_1: Coordinate = { x: 1, y: 0 };
+  const CREATURE_2: Coordinate = { x: 1, y: 9 };
+  const CREATURE_3: Coordinate = { x: 2, y: 9 };
+  const MOVESET = [
+    MOVE_DIRECTION.UP,
+    MOVE_DIRECTION.RIGHT,
+    MOVE_DIRECTION.LEFT,
+    MOVE_DIRECTION.DOWN,
+  ];
 
-//   // Move right
-//   zombieApocalypse.moveUnits();
-//   expect(logger.mock.calls).toEqual([
-//     ['zombie 1 infected creature at (0,1)'],
-//     ['new zombie 2 moved to (0,2)'],
-//   ]);
-//   logger.mockClear();
+  const zombieApocalypse = new ZombieApocalypse(
+    generateWorldSeed({
+      zombie: ZOMBIE,
+      creatures: [CREATURE_1, CREATURE_2, CREATURE_3],
+      moves: [...MOVESET],
+    }),
+    [...MOVESET],
+  );
 
-//   // // // Move up
-//   zombieApocalypse.moveUnits();
-//   expect(logger.mock.calls).toEqual([
-//     ['zombie 1 moved to (9,1)'],
-//     ['zombie 2 moved to (9,2)'],
-//   ]);
-//   logger.mockClear();
+  const logger = jest.spyOn(zombieApocalypse, 'logEvent').mockImplementation();
+  jest.spyOn(global.console, 'log').mockRestore();
 
-//   // // // Move left
-//   zombieApocalypse.moveUnits();
-//   expect(logger.mock.calls).toEqual([
-//     ['zombie 1 infected creature at (9,0)'],
-//     ['new zombie 3 moved to (9,9)'],
-//     ['zombie 2 moved to (9,1)'],
-//   ]);
-//   logger.mockClear();
+  zombieApocalypse.startSimulation();
+  expect(logger.mock.calls).toMatchInlineSnapshot(`
+Array [
+  Array [
+    "zombie 1 moved to (0,0)",
+  ],
+  Array [
+    "zombie 1 infected creature at (0,1)",
+  ],
+  Array [
+    "zombie 1 moved to (0,0)",
+  ],
+  Array [
+    "zombie 2 infected creature at (9,1)",
+  ],
+  Array [
+    "zombie 1 moved to (1,0)",
+  ],
+  Array [
+    "zombie 2 infected creature at (9,2)",
+  ],
+  Array [
+    "zombie 3 moved to (8,1)",
+  ],
+  Array [
+    "zombie 2 moved to (9,1)",
+  ],
+  Array [
+    "zombie 3 moved to (8,2)",
+  ],
+  Array [
+    "zombie 4 moved to (8,2)",
+  ],
+  Array [
+    "zombie 2 moved to (0,1)",
+  ],
+  Array [
+    "zombie 3 moved to (8,1)",
+  ],
+  Array [
+    "zombie 4 moved to (8,3)",
+  ],
+  Array [
+    "zombie 3 moved to (9,1)",
+  ],
+  Array [
+    "zombie 4 moved to (8,2)",
+  ],
+  Array [
+    "zombie 4 moved to (9,2)",
+  ],
+  Array [
+    "zombies' positions: (0,1)(1,0)(9,1)(9,2)",
+  ],
+  Array [
+    "creatures' positions: none",
+  ],
+]
+`);
+  logger.mockClear();
+});
 
-//   // // // Move left
-//   zombieApocalypse.moveUnits();
-//   expect(logger.mock.calls).toEqual([
-//     ['zombie 1 moved to (0,0)'],
-//     ['zombie 2 moved to (0,1)'],
-//     ['zombie 3 infected creature at (0,9)'],
-//     ['new zombie 4 moved to (1,9)'],
-//   ]);
-//   logger.mockClear();
+test('end to end events with remaining creatures', () => {
+  const ZOMBIE: Coordinate = { x: 0, y: 1 };
+  const CREATURE_1: Coordinate = { x: 1, y: 0 };
+  const CREATURE_2: Coordinate = { x: 1, y: 9 };
+  const CREATURE_3: Coordinate = { x: 3, y: 9 };
+  const MOVESET = [
+    MOVE_DIRECTION.UP,
+    MOVE_DIRECTION.RIGHT,
+    MOVE_DIRECTION.LEFT,
+    MOVE_DIRECTION.DOWN,
+  ];
 
-//   // // // Move right AGAIN
-//   zombieApocalypse.moveUnits();
-//   expect(logger.mock.calls).toEqual([
-//     ['zombie 1 moved to (0,1)'],
-//     ['zombie 2 moved to (0,2)'],
-//     ['zombie 3 moved to (0,0)'],
-//     ['zombie 4 moved to (1,0)'],
-//   ]);
-//   logger.mockRestore();
-// });
+  const zombieApocalypse = new ZombieApocalypse(
+    generateWorldSeed({
+      zombie: ZOMBIE,
+      creatures: [CREATURE_1, CREATURE_2, CREATURE_3],
+      moves: [...MOVESET],
+    }),
+    [...MOVESET],
+  );
+
+  const logger = jest.spyOn(zombieApocalypse, 'logEvent').mockImplementation();
+  jest.spyOn(global.console, 'log').mockRestore();
+
+  zombieApocalypse.startSimulation();
+  expect(logger.mock.calls).toMatchInlineSnapshot(`
+Array [
+  Array [
+    "zombie 1 moved to (0,0)",
+  ],
+  Array [
+    "zombie 1 infected creature at (0,1)",
+  ],
+  Array [
+    "zombie 1 moved to (0,0)",
+  ],
+  Array [
+    "zombie 2 infected creature at (9,1)",
+  ],
+  Array [
+    "zombie 1 moved to (1,0)",
+  ],
+  Array [
+    "zombie 2 moved to (9,2)",
+  ],
+  Array [
+    "zombie 3 moved to (8,1)",
+  ],
+  Array [
+    "zombie 2 moved to (9,1)",
+  ],
+  Array [
+    "zombie 3 moved to (8,2)",
+  ],
+  Array [
+    "zombie 2 moved to (0,1)",
+  ],
+  Array [
+    "zombie 3 moved to (8,1)",
+  ],
+  Array [
+    "zombie 3 moved to (9,1)",
+  ],
+  Array [
+    "zombies' positions: (0,1)(1,0)(9,1)",
+  ],
+  Array [
+    "creatures' positions: (9,3)",
+  ],
+]
+`);
+  logger.mockClear();
+});

@@ -31,33 +31,26 @@ export class ZombieApocalypse {
     return this.worldMap[coordinate.y][coordinate.x];
   }
 
-  private mockMovement(): void {
-    const zombies = getUnits(this.worldMap, TileContent.ZOMBIE) as Zombie[];
-    zombies.forEach((z) => {
-      const newCoordiante = z.mockMove(this.worldMap);
+  public printUnitsSummary(): void {
+    const zombies = getUnits(this.worldMap, TileContent.ZOMBIE);
+    const creatures = getUnits(this.worldMap, TileContent.CREATURE);
 
-      if (newCoordiante) {
-        const currentTile = this.getTile(z.coordinates);
+    const a = zombies
+      .map((z) =>
+        zombies.length === 0
+          ? 'none'
+          : `(${z.coordinates.y},${z.coordinates.x})`,
+      )
+      .join('');
+    const b =
+      creatures.length === 0
+        ? 'none'
+        : creatures
+            .map((z) => `(${z.coordinates.y},${z.coordinates.x})`)
+            .join('');
 
-        z.move(this.worldMap);
-        currentTile.units = currentTile.units.filter(
-          (_z: Zombie) => _z.id !== z.id,
-        );
-        const newTile = this.getTile(newCoordiante);
-        newTile.units.push(z);
-
-        const hasCreature = newTile.units.some((u) => u instanceof Creature);
-
-        if (hasCreature) {
-          // Convert infected to Zombie
-          newTile.units = newTile.units.map((u) =>
-            u instanceof Creature
-              ? new Zombie(newTile.coordinate, generateId(), [...this.moves])
-              : u,
-          );
-        }
-      }
-    });
+    this.logEvent(`zombies' positions: ${a}`);
+    this.logEvent(`creatures' positions: ${b}`);
   }
 
   public printMap(): void {
@@ -83,7 +76,59 @@ export class ZombieApocalypse {
     console.log(map);
   }
 
-  public moveUnits(): void {
-    this.mockMovement();
+  public moveUnits(): boolean {
+    const zombies = getUnits(this.worldMap, TileContent.ZOMBIE) as Zombie[];
+
+    const zombiesToMove = zombies
+      .sort((a, b) => a.id - b.id)
+      .filter((z) => z.moves.length > 0);
+
+    if (zombiesToMove.length === 0) {
+      this.printUnitsSummary();
+      return false;
+    }
+
+    zombiesToMove.forEach((z) => {
+      const newCoordiante = z.mockMove(this.worldMap);
+
+      if (newCoordiante) {
+        const currentTile = this.getTile(z.coordinates);
+
+        z.move(this.worldMap);
+        currentTile.units = currentTile.units.filter(
+          (_z: Zombie) => _z.id !== z.id,
+        );
+        const newTile = this.getTile(newCoordiante);
+        newTile.units.push(z);
+
+        const hasCreature = newTile.units.some((u) => u instanceof Creature);
+
+        if (hasCreature) {
+          // Convert infected to Zombie
+          newTile.units = newTile.units.map((u) =>
+            u instanceof Creature
+              ? new Zombie(newTile.coordinate, generateId(), [...this.moves])
+              : u,
+          );
+          this.logEvent(
+            `zombie ${z.id} infected creature at (${newTile.coordinate.y},${newTile.coordinate.x})`,
+          );
+        } else {
+          this.logEvent(
+            `zombie ${z.id} moved to (${newTile.coordinate.y},${newTile.coordinate.x})`,
+          );
+        }
+      }
+    });
+
+    return true;
+  }
+
+  public startSimulation(): void {
+    let hasRemainingMoves: boolean;
+
+    do {
+      hasRemainingMoves = this.moveUnits();
+    } while (hasRemainingMoves);
   }
 }

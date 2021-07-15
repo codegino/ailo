@@ -98,34 +98,39 @@ async function setupEnvironment() {
   zombieApocalypse = new ZombieApocalypse(worldMap, MOVEMENTS);
 }
 
-async function askForAction(action = '') {
+async function askForAction() {
   const result = await inquier.prompt([
     {
       name: 'action',
       message: 'What do you want to do?',
       type: 'list',
       choices: [
-        { name: 'simulate', value: 'simulate' },
-        { name: 'quit', value: 'quit' },
+        { name: 'Next event', value: 'next_event' },
+        { name: 'Quit', value: 'quit' },
       ],
     },
   ]);
-  action = result.action;
-
-  if (action === 'simulate') {
-    zombieApocalypse.moveUnits();
-    zombieApocalypse.printMap();
-    await askForAction();
-  } else if (action === 'quit') {
-    return;
-  }
+  return result.action;
 }
 
 (async function startApplication() {
   try {
     await setupEnvironment();
-    zombieApocalypse.printMap();
-    await askForAction();
+
+    let shouldContinue = true;
+
+    do {
+      const action = await askForAction();
+      if (action === 'next_event') {
+        shouldContinue = zombieApocalypse.moveUnits();
+        if (shouldContinue) {
+          zombieApocalypse.printMap();
+        }
+      } else {
+        zombieApocalypse.startSimulation();
+        shouldContinue = false;
+      }
+    } while (shouldContinue);
   } catch (error) {
     console.error(error);
   }
