@@ -1,6 +1,6 @@
 import { Coordinate } from './models/map.model';
 import { MOVE_DIRECTION } from './models/movement-direction.enum';
-import { ZombieApocalypse } from './core/zombie-apocalypse.model';
+import { ZombieApocalypse } from './core/zombie-apocalypse';
 import { generateMap } from './utils/map-generator';
 import * as inquier from 'inquirer';
 
@@ -93,7 +93,7 @@ async function setupEnvironment() {
   const ZOMBIE = parseZombieCoordinate(zombie);
   const CREATURES = parseCreatures(creatures);
 
-  const worldMap = generateMap(DIMENSION, ZOMBIE, CREATURES);
+  const worldMap = generateMap(DIMENSION, ZOMBIE, CREATURES, [...MOVEMENTS]);
 
   zombieApocalypse = new ZombieApocalypse(worldMap, MOVEMENTS);
 }
