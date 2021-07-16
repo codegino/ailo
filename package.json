@@ -1,7 +1,7 @@
 {
-  "name": "node-typescript-boilerplate",
+  "name": "ailo-zombie",
   "version": "0.0.0",
-  "description": "Minimalistic boilerplate to quick-start Node.js development in TypeScript.",
+  "description": "Solution for zombie assignment",
   "engines": {
     "node": ">= 14.16 <15"
   },
@@ -33,13 +33,10 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
   },
-  "author": "Jakub Synowiec <github@jakubsynowiec.info>",
+  "author": "codegino <carloginocatapang@gmail.com",
   "license": "Apache-2.0",
   "dependencies": {
     "inquirer": "^8.1.1",
     "tslib": "~2.3.0"
-  },
-  "volta": {
-    "node": "14.16.1"
   }
 }
